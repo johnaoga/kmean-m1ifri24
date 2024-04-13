@@ -1,0 +1,5 @@
+# Gbangboche Olabissi
+streamlit
+pandas
+numpy
+scikit-learn
