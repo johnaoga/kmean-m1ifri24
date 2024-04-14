@@ -27,6 +27,23 @@ def main():
     data = load_data(uploaded_file_path)
     st.write(data)
 
+    # setup step
+    st.subheader("Setup K-Means Clustering")
+
+    k = st.number_input(
+        "Enter value of K",
+        step=1,
+        min_value=1,
+        max_value=len(data),
+    )
+
+    i = st.number_input(
+        "Enter max number of iterations",
+        step=1,
+        value=100,
+        min_value=1,
+    )
+
 
 if __name__ == "__main__":
     main()
