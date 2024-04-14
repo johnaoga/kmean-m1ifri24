@@ -1,0 +1,6 @@
+# MAMA Abbas
+streamlit
+pandas
+numpy
+scikit-learn
+plotly
