@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+random
+matplotlib
+sklearn
+silhouette_score
+davies_bouldin_score
+#AHLOUMESSOU Agossou Parfait
+
