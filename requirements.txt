@@ -1,0 +1,8 @@
+# AZAGBA Roméo
+
+streamlit
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
