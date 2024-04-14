@@ -147,6 +147,39 @@ def main():
                 st.write("Standard deviation:", np.std(cluster_data, axis=0))
                 st.write("Mean:", np.mean(cluster_data, axis=0))
 
+    st.header("Analysis to determine optimal value of k")
+    if st.button("Process Analysis"):
+        with st.spinner("Processing ..."):
+            step = 100 / (len(data) + 1)
+            step = round(step, 1) / 10
+            pb = st.progress(0)
+            clustering_quality = {}
+            for k in range(1, len(data) + 1):
+                k_result = k_means(data, k, max_i)
+                w_ = compute('with', data, k_result['centroids'], k_result['clusters'])
+                b_ = compute('between', data, k_result['centroids'], k_result['clusters'])
+                clustering_quality[k] = {
+                    'w': w_,
+                    'b': b_,
+                }
+                pb.progress((k * step) / 10)
+            pb.progress(100)
+            pb.empty()
+
+            st.write("Clustering quality for different k values:")
+            st.write(pd.DataFrame(clustering_quality).T)
+
+            q_diff = {}
+            for k in clustering_quality:
+                q_diff[k] = clustering_quality[k]['b'] - clustering_quality[k]['w']
+
+            if q_diff:
+                k_optimal = max(q_diff.items(), key=lambda x: x[1])[0]
+                st.write(f"Optimal k is: {k_optimal}")
+            else:
+                print("q_diff is empty. Check q_diff.")
+                st.write(f"Type : {type(q_diff)}")
+
 
 if __name__ == "__main__":
     main()
