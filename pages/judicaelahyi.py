@@ -4,6 +4,8 @@
 import numpy as np
 import streamlit as st
 import pandas as pd
+import plotly.express as px
+from sklearn.decomposition import PCA
 
 
 def load_data(file_path):
@@ -66,7 +68,25 @@ def main():
         clusters = k_result['clusters']
         centroids = k_result['centroids']
         st.success("Processing is completed")
-        st.write(clusters, centroids)
+
+        pca = PCA(n_components=2)
+        data_reduced = pca.fit_transform(data)
+        data_reduced_df = pd.DataFrame(data_reduced, columns=['PC1', 'PC2'])
+
+        if st.toggle('Display RAW result'):
+            st.subheader("Results (RAW)")
+            st.write("Centroids:")
+            st.write(pd.DataFrame(centroids, columns=data.columns))
+            st.write("Clusters:")
+            st.write(pd.DataFrame({"Data Point": np.arange(len(data)), "Cluster": clusters}))
+            st.write("Standard deviation of each cluster")
+            for i in range(k):
+                st.write(f"Cluster {i + 1}: {np.std(data[clusters == i], axis=0)}")
+
+        st.subheader("Results (Visual)")
+        plot_data = pd.concat([data_reduced_df, pd.Series(clusters, name='Cluster')], axis=1)
+        fig = px.scatter(plot_data, x='PC1', y='PC2', color='Cluster', title='K-means Clustering with PCA')
+        st.plotly_chart(fig)
 
 
 if __name__ == "__main__":
