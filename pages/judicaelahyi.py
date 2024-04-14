@@ -88,6 +88,18 @@ def main():
         fig = px.scatter(plot_data, x='PC1', y='PC2', color='Cluster', title='K-means Clustering with PCA')
         st.plotly_chart(fig)
 
+        st.subheader("Predict Cluster")
+        if centroids is not None:
+            point_values = []
+            for i in range(data.shape[1]):
+                value = st.number_input(f"Enter the value of feature {i + 1}", step=0.01)
+                point_values.append(value)
+
+            if st.button("Predict Cluster"):
+                distances = np.linalg.norm(centroids - point_values, axis=1)
+                cluster_prediction = np.argmin(distances)
+                st.write(f"The point is predicted to belong to cluster {cluster_prediction + 1}.")
+
 
 if __name__ == "__main__":
     main()
