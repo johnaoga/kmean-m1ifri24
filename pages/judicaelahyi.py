@@ -71,41 +71,42 @@ def main():
         st.session_state.clusters = clusters
         st.session_state.centroids = centroids
 
-    st.header("Display results")
-    pca = PCA(n_components=2)
-    data_reduced = pca.fit_transform(data)
-    data_reduced_df = pd.DataFrame(data_reduced, columns=['PC1', 'PC2'])
-
-    if st.toggle('RAW'):
-        clusters = st.session_state.get('clusters')
-        centroids = st.session_state.get('centroids')
-        st.subheader("Results (RAW)")
-        st.write("Centroids:")
-        st.write(pd.DataFrame(centroids, columns=data.columns))
-        st.write("Clusters:")
-        st.write(pd.DataFrame({"Data Point": np.arange(len(data)), "Cluster": clusters}))
-        st.write("Standard deviation of each cluster")
-        for i in range(k):
-            st.write(f"Cluster {i + 1}: {np.std(data[clusters == i], axis=0)}")
-
-    st.subheader("Results (Visual)")
     clusters = st.session_state.get('clusters')
-    plot_data = pd.concat([data_reduced_df, pd.Series(clusters, name='Cluster')], axis=1)
-    fig = px.scatter(plot_data, x='PC1', y='PC2', color='Cluster', title='K-means Clustering with PCA')
-    st.plotly_chart(fig)
-
-    st.header("Predict Cluster")
     centroids = st.session_state.get('centroids')
-    if centroids is not None:
-        point_values = []
-        for i in range(data.shape[1]):
-            value = st.number_input(f"Enter the value of feature {i + 1}", step=0.01)
-            point_values.append(value)
+    if clusters is not None and centroids is not None:
+        st.header("Display results")
+        pca = PCA(n_components=2)
+        data_reduced = pca.fit_transform(data)
+        data_reduced_df = pd.DataFrame(data_reduced, columns=['PC1', 'PC2'])
 
-        if st.button("Predict Cluster"):
-            distances = np.linalg.norm(centroids - point_values, axis=1)
-            cluster_prediction = np.argmin(distances)
-            st.write(f"The point is predicted to belong to cluster {cluster_prediction + 1}.")
+        if st.toggle('RAW'):
+            st.subheader("Results (RAW)")
+            st.write("Centroids:")
+            st.write(pd.DataFrame(centroids, columns=data.columns))
+            st.write("Clusters:")
+            st.write(pd.DataFrame({"Data Point": np.arange(len(data)), "Cluster": clusters}))
+            st.write("Standard deviation of each cluster")
+            for i in range(k):
+                st.write(f"Cluster {i + 1}: {np.std(data[clusters == i], axis=0)}")
+
+        st.subheader("Results (Visual)")
+        clusters = st.session_state.get('clusters')
+        plot_data = pd.concat([data_reduced_df, pd.Series(clusters, name='Cluster')], axis=1)
+        fig = px.scatter(plot_data, x='PC1', y='PC2', color='Cluster', title='K-means Clustering with PCA')
+        st.plotly_chart(fig)
+
+        st.header("Predict Cluster")
+        centroids = st.session_state.get('centroids')
+        if centroids is not None:
+            point_values = []
+            for i in range(data.shape[1]):
+                value = st.number_input(f"Enter the value of feature {i + 1}", step=0.01)
+                point_values.append(value)
+
+            if st.button("Predict Cluster"):
+                distances = np.linalg.norm(centroids - point_values, axis=1)
+                cluster_prediction = np.argmin(distances)
+                st.write(f"The point is predicted to belong to cluster {cluster_prediction + 1}.")
 
 
 if __name__ == "__main__":
