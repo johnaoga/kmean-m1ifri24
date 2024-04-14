@@ -63,14 +63,13 @@ def main():
         min_value=1,
     )
 
-    clusters = None
-    centroids = None
-
     if st.button("Process Clustering"):
         k_result = k_means(data, k, max_i)
         clusters = k_result['clusters']
         centroids = k_result['centroids']
         st.success("Processing is completed")
+        st.session_state.clusters = clusters
+        st.session_state.centroids = centroids
 
     st.header("Display results")
     pca = PCA(n_components=2)
@@ -78,6 +77,8 @@ def main():
     data_reduced_df = pd.DataFrame(data_reduced, columns=['PC1', 'PC2'])
 
     if st.toggle('RAW'):
+        clusters = st.session_state.get('clusters')
+        centroids = st.session_state.get('centroids')
         st.subheader("Results (RAW)")
         st.write("Centroids:")
         st.write(pd.DataFrame(centroids, columns=data.columns))
@@ -88,11 +89,13 @@ def main():
             st.write(f"Cluster {i + 1}: {np.std(data[clusters == i], axis=0)}")
 
     st.subheader("Results (Visual)")
+    clusters = st.session_state.get('clusters')
     plot_data = pd.concat([data_reduced_df, pd.Series(clusters, name='Cluster')], axis=1)
     fig = px.scatter(plot_data, x='PC1', y='PC2', color='Cluster', title='K-means Clustering with PCA')
     st.plotly_chart(fig)
 
     st.header("Predict Cluster")
+    centroids = st.session_state.get('centroids')
     if centroids is not None:
         point_values = []
         for i in range(data.shape[1]):
