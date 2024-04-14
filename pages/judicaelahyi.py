@@ -47,7 +47,7 @@ def main():
     st.write(data)
 
     # setup step
-    st.subheader("Setup K-Means Clustering")
+    st.header("Setup K-Means Clustering")
 
     k = st.number_input(
         "Enter value of K",
@@ -72,7 +72,7 @@ def main():
         centroids = k_result['centroids']
         st.success("Processing is completed")
 
-    st.subheader("Display results")
+    st.header("Display results")
     pca = PCA(n_components=2)
     data_reduced = pca.fit_transform(data)
     data_reduced_df = pd.DataFrame(data_reduced, columns=['PC1', 'PC2'])
@@ -92,7 +92,7 @@ def main():
     fig = px.scatter(plot_data, x='PC1', y='PC2', color='Cluster', title='K-means Clustering with PCA')
     st.plotly_chart(fig)
 
-    st.subheader("Predict Cluster")
+    st.header("Predict Cluster")
     if centroids is not None:
         point_values = []
         for i in range(data.shape[1]):
